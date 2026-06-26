@@ -13,7 +13,7 @@ function App() {
 		try {
 			setLoading(true);
 
-			let url = `${API_URL}?limit=20`;
+			let url = `${API_URL}/api/products?limit=20`;
 
 			if (category) {
 				url += `&category=${category}`;
