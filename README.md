@@ -1,46 +1,73 @@
 # 🚀 CodeVector Backend Task
 
-A high-performance backend service built with **Node.js, Express.js, and MongoDB** to efficiently browse **200,000+ products** using **cursor-based pagination**. The application supports category filtering, fast pagination, and is designed to handle large datasets efficiently.
+A scalable backend application built with **Node.js, Express.js, and MongoDB Atlas** that efficiently handles **200,000+ products** using **Cursor-Based Pagination**.
+
+The application supports fast pagination, category filtering, and optimized MongoDB queries through compound indexes.
 
 ---
 
-## ✨ Features
+# 🌐 Live Demo
+
+### Backend
+
+https://codevector-task-9wq0.onrender.com/
+
+### GitHub Repository
+
+https://github.com/harshberwa/codevector-task
+
+---
+
+# ✨ Features
 
 - Browse 200,000+ products
-- Cursor-based pagination (no duplicate or missing records)
-- Category filtering
-- Fast MongoDB queries using compound indexes
-- Bulk product seeding using `insertMany()`
-- RESTful API
-- MongoDB Atlas integration
-- Optional React frontend for API demonstration
+- Cursor-Based Pagination
+- Category Filtering
+- Newest Products First
+- Fast MongoDB Queries
+- Compound Indexing
+- Bulk Product Seeding
+- REST API
+- MongoDB Atlas Integration
+- Ready for Deployment
 
 ---
 
-## 🛠 Tech Stack
+# 🛠 Tech Stack
+
+## Backend
 
 - Node.js
 - Express.js
 - MongoDB Atlas
 - Mongoose
+
+## Utilities
+
 - Faker.js
-- React (Bonus UI)
+
+## Bonus
+
+- React (Simple UI)
 
 ---
 
-## 📂 Project Structure
+# 📁 Project Structure
 
 ```
 codevector-task
 │
 ├── frontend/
+│
 ├── scripts/
 │   └── seed.js
+│
 ├── src/
+│   ├── config/
 │   ├── controllers/
 │   ├── models/
-│   ├── routes/
-│   └── app.js
+│   └── routes/
+│
 ├── index.js
 ├── package.json
 └── README.md
@@ -48,178 +75,222 @@ codevector-task
 
 ---
 
-## 📦 Database Schema
+# 📦 Product Schema
 
 ```js
-Product
 {
-  name: String,
-  category: String,
-  price: Number,
-  createdAt: Date,
-  updatedAt: Date
+    name: String,
+    category: String,
+    price: Number,
+    createdAt: Date,
+    updatedAt: Date
 }
 ```
 
 ---
 
-## ⚡ Pagination Strategy
+# 🚀 API Endpoints
 
-This project uses **Cursor Pagination** instead of Offset Pagination.
-
-Sorting order:
-
-```js
-updatedAt DESC
-_id DESC
-```
-
-Cursor contains:
-
-```json
-{
-  "updatedAt": "...",
-  "id": "..."
-}
-```
-
-### Why Cursor Pagination?
-
-- Faster on large datasets
-- No expensive `skip()`
-- Prevents duplicate records
-- Prevents missing records when new products are added
-
----
-
-## 📑 API Endpoints
-
-### Get Products
+## Get Products
 
 ```
 GET /api/products
 ```
 
+Returns latest products.
+
 ---
 
-### Category Filter
+## Category Filter
 
 ```
 GET /api/products?category=Electronics
 ```
 
----
-
-### Cursor Pagination
-
-```
-GET /api/products?limit=20&cursorUpdatedAt=<date>&cursorId=<id>
-```
+Returns products from a specific category.
 
 ---
 
-## 🌱 Seeding Strategy
+## Cursor Pagination
 
-A seed script generates **200,000 products** using Faker.js.
+```
+GET /api/products?limit=20&cursorUpdatedAt=<timestamp>&cursorId=<productId>
+```
 
-To improve performance:
+Returns the next page using cursor pagination.
 
+---
+
+# ⚡ Pagination Strategy
+
+This project uses **Cursor-Based Pagination** instead of traditional Skip/Limit pagination.
+
+Products are sorted using:
+
+```
+updatedAt DESC
+_id DESC
+```
+
+Each response returns a cursor:
+
+```json
+{
+    "updatedAt": "...",
+    "id": "..."
+}
+```
+
+The client sends this cursor to fetch the next page.
+
+---
+
+# ✅ Why Cursor Pagination?
+
+Cursor pagination was selected because:
+
+- Faster than Skip Pagination
+- Avoids expensive skip() operations
+- Scales well with large datasets
+- Prevents duplicate records
+- Prevents missing records when new products are inserted while browsing
+
+---
+
+# 📈 Database Indexes
+
+Two compound indexes are used.
+
+### Cursor Pagination Index
+
+```
+updatedAt
+_id
+```
+
+Supports fast pagination.
+
+---
+
+### Category Pagination Index
+
+```
+category
+updatedAt
+_id
+```
+
+Supports efficient category filtering with pagination.
+
+---
+
+# 🌱 Product Seeding
+
+A seed script generates **200,000 products**.
+
+Implementation details:
+
+- Faker.js generates fake data
 - Products are generated in batches
-- Bulk insertion uses `insertMany()`
-- Batch size = 5000
+- Batch Size: 5000
+- Uses insertMany()
 
-This significantly reduces database round trips compared to inserting one document at a time.
-
----
-
-## 📈 Indexing Strategy
-
-Indexes used:
-
-```js
-updatedAt + _id
-```
-
-Supports efficient cursor pagination.
-
-```js
-category + updatedAt + _id
-```
-
-Supports fast category filtering with pagination.
+Bulk insertion significantly reduces database operations compared to inserting one document at a time.
 
 ---
 
-## ▶️ Local Setup
+# ▶️ Running Locally
 
-Clone the repository:
+## Clone Repository
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/harshberwa/codevector-task.git
 ```
 
-Install dependencies:
+---
+
+## Install Dependencies
 
 ```bash
 npm install
 ```
 
-Create a `.env` file:
+---
+
+## Configure Environment
+
+Create a `.env` file.
 
 ```env
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=your_connection_string
 PORT=5000
 ```
 
-Seed database:
+---
+
+## Seed Database
 
 ```bash
-npm run seed
+node scripts/seed.js
 ```
 
-Run server:
+---
+
+## Start Server
+
+Development
 
 ```bash
 npm run dev
 ```
 
+Production
+
+```bash
+npm start
+```
+
 ---
 
-## 🚀 Deployment
+# 🚀 Deployment
 
-Backend can be deployed on **Render**.
+Backend is deployed on **Render**.
 
 Database is hosted on **MongoDB Atlas**.
 
 ---
 
-## 🔮 Future Improvements
+# 🔮 Future Improvements
 
-- Full-text product search
-- Redis caching
-- API rate limiting
-- Unit & integration tests
-- Docker support
-- API documentation using Swagger
-
----
-
-## 🤖 AI Usage
-
-AI tools were used to:
-
-- Discuss implementation approaches
-- Review pagination logic
-- Improve code readability
-- Generate documentation
-
-All implementation details, code structure, and design decisions were reviewed and understood before submission.
+- Product Search
+- Price Filtering
+- Redis Caching
+- Authentication
+- Rate Limiting
+- Docker Support
+- Swagger API Documentation
+- Unit & Integration Tests
 
 ---
 
-## 👨‍💻 Author
+# 🤖 AI Usage
+
+AI tools were used for:
+
+- Discussing implementation approaches
+- Reviewing pagination logic
+- Improving code quality
+- Explaining concepts
+- Writing documentation
+
+All architectural decisions, implementation, and code were reviewed and understood before submission.
+
+---
+
+# 👨‍💻 Author
 
 **Harsh Berwa**
 
 GitHub:
+
 https://github.com/harshberwa
